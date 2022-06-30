@@ -466,6 +466,7 @@ struct Pcsx2Config
 					WrapGSMem : 1,
 					Mipmap : 1,
 					PointListPalette : 1,
+					PreRoundSprites : 1,
 					ManualUserHacks : 1,
 					UserHacks_AlignSpriteX : 1,
 					UserHacks_AutoFlush : 1,

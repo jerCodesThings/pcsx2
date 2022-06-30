@@ -70,6 +70,7 @@ namespace GameDatabaseSchema
 		MergeSprite,
 		WildArmsHack,
 		PointListPalette,
+		PreRoundSprites,
 
 		// integer settings
 		Mipmap,
