@@ -2737,6 +2737,8 @@ void GSRendererHW::EmulateBlending(bool& DATE_PRIMID, bool& DATE_BARRIER, bool& 
 					// Compensate slightly for Cd*(As + 1) - Cs*As.
 					// Try to compensate a bit with subtracting 1 (0.00392) * (Alpha + 1) from Cs.
 					m_conf.ps.clr_hw = 2;
+
+					fprintf(stderr, "BLEND MIX 1 comp\n");
 				}
 
 				m_conf.ps.blend_a = 0;
