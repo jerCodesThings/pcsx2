@@ -745,13 +745,14 @@ struct PSMain
 
 			// As/Af clamp alpha for Blend mix
 			// We shouldn't clamp blend mix with clr1 as we want alpha higher
+			float C_clamped = C;
 			if (PS_BLEND_MIX && PS_CLR_HW != 1)
-				C = min(C, 1.f);
+				C_clamped = min(C_clamped, 1.f);
 
 			if (PS_BLEND_A == PS_BLEND_B)
 				Color.rgb = D;
 			else
-				Color.rgb = trunc((A - B) * C + D);
+				Color.rgb = trunc((A - B) * C_clamped + D);
 
 			if (PS_CLR_HW == 1)
 			{
@@ -766,6 +767,16 @@ struct PSMain
 				float min_color = min(min(Color.r, Color.g), Color.b);
 				float alpha_compensate = max(1.f, min_color / 255.f);
 				As -= alpha_compensate;
+			}
+			else if (PS_CLR_HW == 2)
+			{
+				// Compensate slightly for Cd*(As + 1) - Cs*As.
+				// The initial factor we chose is 1 (0.00392)
+				// as that is the minimum color Cd can be,
+				// then we multiply by alpha to get the minimum
+				// blended value it can be.
+				float color_compensate = 1.0f * (C + 1.0f);
+				Color.rgb -= float3(color_compensate);
 			}
 		}
 		else

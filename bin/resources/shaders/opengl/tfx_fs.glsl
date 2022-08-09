@@ -755,14 +755,15 @@ void ps_blend(inout vec4 Color, inout float As)
 
     // As/Af clamp alpha for Blend mix
     // We shouldn't clamp blend mix with clr1 as we want alpha higher
+    float C_clamped = C;
 #if PS_BLEND_MIX && PS_CLR_HW != 1
-    C = min(C, 1.0f);
+    C_clamped = min(C_clamped, 1.0f);
 #endif
 
 #if PS_BLEND_A == PS_BLEND_B
     Color.rgb = D;
 #else
-    Color.rgb = trunc((A - B) * C + D);
+    Color.rgb = trunc((A - B) * C_clamped + D);
 #endif
 
 #if PS_CLR_HW == 1
@@ -778,6 +779,14 @@ void ps_blend(inout vec4 Color, inout float As)
     float min_color = min(min(Color.r, Color.g), Color.b);
     float alpha_compensate = max(1.0f, min_color / 255.0f);
     As -= alpha_compensate;
+#elif PS_CLR_HW == 2
+    // Compensate slightly for Cd*(As + 1) - Cs*As.
+    // The initial factor we chose is 1 (0.00392)
+    // as that is the minimum color Cd can be,
+    // then we multiply by alpha to get the minimum
+    // blended value it can be.
+    float color_compensate = 1.0f * (C + 1.0f);
+    Color.rgb -= vec3(color_compensate);
 #endif
 
 #else
