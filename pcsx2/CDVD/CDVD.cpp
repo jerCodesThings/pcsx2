@@ -812,14 +812,18 @@ static uint cdvdBlockReadTime(CDVD_MODE_TYPE mode)
 		}
 
 		const float sectorSpeed = ((static_cast<float>(cdvd.SeekToSector - offset) / static_cast<float>(numSectors)) * 0.60f) + 0.40f;
-
-		return (PSXCLK / (static_cast<float>(((mode == MODE_CDROM) ? CD_SECTORS_PERSECOND : DVD_SECTORS_PERSECOND) * cdvd.Speed) * sectorSpeed));
+		float cycles = (PSXCLK / (static_cast<float>(((mode == MODE_CDROM) ? CD_SECTORS_PERSECOND : DVD_SECTORS_PERSECOND) * cdvd.Speed) * sectorSpeed));
+		//DevCon.Warning("MS %f", static_cast<float>(1000.0f / static_cast<float>(PSXCLK)) * cycles);
+		return static_cast<int>(cycles);
 		//return ((PSXCLK * cdvd.BlockSize) / ((float)(((mode == MODE_CDROM) ? PSX_CD_READSPEED : PSX_DVD_READSPEED) * cdvd.Speed) * sectorSpeed));
 	}
 
 	// CLV Read Speed is constant
 	//return ((PSXCLK * cdvd.BlockSize) / (float)(((mode == MODE_CDROM) ? PSX_CD_READSPEED : PSX_DVD_READSPEED) * cdvd.Speed));
-	return (PSXCLK / (((mode == MODE_CDROM) ? CD_SECTORS_PERSECOND : DVD_SECTORS_PERSECOND) * cdvd.Speed));
+	float cycles = (PSXCLK / (((mode == MODE_CDROM) ? CD_SECTORS_PERSECOND : DVD_SECTORS_PERSECOND) * cdvd.Speed) * 1.3f);
+
+	//DevCon.Warning("MS %f", static_cast<float>(1000.0f / static_cast<float>(PSXCLK)) * cycles);
+	return static_cast<int>(cycles);
 }
 
 void cdvdReset()
